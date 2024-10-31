@@ -156,7 +156,7 @@ const AddCategory = ({ closeModal }) => {
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-2/5">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl">Add New Category</h2>
+          <h2 className="text-xl">Tambah Kategori Baru</h2>
           <button
             type="button"
             onClick={closeModal}
@@ -170,25 +170,25 @@ const AddCategory = ({ closeModal }) => {
           <div className="grid grid-cols-1 gap-4">
             <div className="flex flex-col space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <label className="block text-sm font-medium text-gray-700">Nama</label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="Enter category name"
+                  placeholder="Masukan Nama Kategori"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Description</label>
+                <label className="block text-sm font-medium text-gray-700">Deskripsi</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
                   className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                  placeholder="Enter Description"
+                  placeholder="Masukan Deskripsi"
                   rows="4"
                   required
                 ></textarea>
@@ -199,7 +199,7 @@ const AddCategory = ({ closeModal }) => {
             type="submit"
             className="w-full text-white bg-teal-300 hover:bg-teal-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-6"
           >
-            Add Category
+            Tambah Kategori
           </button>
         </form>
       </div>

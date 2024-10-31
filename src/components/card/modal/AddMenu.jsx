@@ -265,7 +265,8 @@ const AddMenuModal = ({ closeModal }) => {
       try {
         const response = await api.get("/get_categories", {
           headers: {
-            Authorization: `Bearer ${token}`, // Include token in headers
+            Authorization: `Bearer ${token}`,
+            'ngrok-skip-browser-warning': 'true' // Include token in headers
           },
         });
         setCategories(response.data.data);

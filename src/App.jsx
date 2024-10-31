@@ -16,11 +16,31 @@
 
 // export default App
 
+// import { RouterProvider } from "react-router-dom";
+// import router from "./routers/router";
+
+// function App() {
+//   return <RouterProvider router={router} />;
+// }
+
+// export default App;
+
+// src/App.jsx
+
+// App.jsx
+import React from "react";
 import { RouterProvider } from "react-router-dom";
 import router from "./routers/router";
+import { ChatProvider } from "./context/chatContext";
+import ChatWindow from "./components/ChatComponent/ChatWindow"; // Import the ChatWindow component
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <ChatProvider> {/* Wrap your app with the ChatProvider */}
+      <RouterProvider router={router} />
+    </ChatProvider>
+  );
 }
 
 export default App;
+

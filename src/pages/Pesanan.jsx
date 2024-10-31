@@ -29,7 +29,7 @@ const OrderPage = () => {
                                     <FaHome className="h-5 w-5 text-gray-500" />
                                     <span>Home</span>
                                     <span className="text-gray-400">/</span>
-                                    <span className="text-teal-500">Task 1</span>
+                                    <span className="text-teal-500">Daftar Pesanan</span>
                                 </div>
                                 <button className="bg-white text-teal-600 p-2 rounded-full">
                                     <MdAdd className="h-5 w-5" />

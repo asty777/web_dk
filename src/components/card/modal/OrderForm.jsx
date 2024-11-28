@@ -1,17 +1,19 @@
+
+
 import React, { useEffect, useState } from "react";
 import { IoMdClose } from "react-icons/io";
 import api from "../../../api/config";
-import axios from "axios";
+import AlertComponent from "../../notif/AlertComponent";
 
 const OrderModal = ({ closeModal, fetchCart, user_id }) => {
+  const [cartItems, setCartItems] = useState([]);
   const [formData, setFormData] = useState({
-    menuName: "",
+    menu_id: null,
     quantity: 1,
     price: 0,
   });
-  const [cartId, setCartId] = useState(null); // Default to null
 
-  const fetchCartItem = async () => {
+  const fetchCartItems = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await api.get(`/getCart/admin/${user_id}`, {
@@ -21,21 +23,8 @@ const OrderModal = ({ closeModal, fetchCart, user_id }) => {
         },
       });
 
-      console.log("Fetched cart item response:", response.data);
-
       if (response.data.status && response.data.cart.cart_menu) {
-        const cartItem = response.data.cart.cart_menu[0];
-
-        if (cartItem && cartItem.menu) {
-          setFormData({
-            menuName: cartItem.menu.name || "",
-            quantity: cartItem.quantity || 1,
-            price: cartItem.price || 0,
-          });
-          setCartId(cartItem.cart_id); // Assuming cart_id is a single value
-        } else {
-          console.warn("Cart item or menu is undefined:", cartItem);
-        }
+        setCartItems(response.data.cart.cart_menu);
       } else {
         console.error("Error in response:", response.data.message);
       }
@@ -45,60 +34,54 @@ const OrderModal = ({ closeModal, fetchCart, user_id }) => {
   };
 
   useEffect(() => {
-    fetchCartItem();
-  }, [user_id]); // Trigger when user_id changes
+    fetchCartItems();
+  }, [user_id]);
 
-  const handleChange = (e) => {
+  const handleChange = (e, index) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    const updatedCartItems = [...cartItems];
+    updatedCartItems[index] = {
+      ...updatedCartItems[index],
       [name]: value,
-    });
-  };
-
-  const totalHarga = formData.quantity * formData.price;
-
-  const updateCartItem = async (cartId, data) => {
-    try {
-      const token = localStorage.getItem("token");
-      console.log("Updating cart item with ID:", cartId, "Data:", data); // Log the cartId and data
-
-      const response = await axios.patch(
-        `https://8650-45-64-100-26.ngrok-free.app/api/updatePriceCart`,
-        data,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
-
-      if (response.data.status) {
-        console.log("Cart item updated successfully");
-      } else {
-        console.error("Failed to update cart item:", response.data.message);
-      }
-    } catch (error) {
-      console.error("Error updating cart item:", error.response?.data || error.message);
-    }
+    };
+    setCartItems(updatedCartItems);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Submitting with cartId:", cartId); // Log cartId
-    if (cartId) { // Check if cartId is valid
-      await updateCartItem(cartId, {
-        price: formData.price,
-        quantity: formData.quantity,
+    for (const item of cartItems) {
+      await updateCartItem({
+        customer_id: user_id,
+        menu_id: item.menu.id,
+        price: item.price,
+        quantity: item.quantity,
       });
-      closeModal();
-      fetchCartItem(); // Fetch updated cart item
-    } else {
-      console.error("cartId is not valid:", cartId);
+    }
+    closeModal();
+    fetchCart();
+  };
+
+  const updateCartItem = async (data) => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await api.patch("/updatePriceCart", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "ngrok-skip-browser-warning": "true",
+        },
+      });
+
+      if (response.data.status) {
+        AlertComponent.SuccessEditOrder();
+      } else {
+        AlertComponent.FailedEditOrder();
+      }
+    } catch (error) {
+      AlertComponent.FailedEditOrder();
+      console.error("Error updating cart item:", error.response?.data || error.message);
     }
   };
-  
+
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
       <div className="bg-white rounded-lg shadow-lg p-6 w-2/5">
@@ -113,69 +96,58 @@ const OrderModal = ({ closeModal, fetchCart, user_id }) => {
           </button>
         </div>
         <hr className="border-t border-gray-300 mb-4" />
-        <form onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Nama Menu
-              </label>
-              <input
-                type="text"
-                name="menuName"
-                value={formData.menuName}
-                onChange={handleChange}
-                className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                readOnly
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Harga (per item)
-              </label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-                placeholder="Enter price"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Quantity
-              </label>
-              <input
-                type="number"
-                name="quantity"
-                value={formData.quantity}
-                onChange={handleChange}
-                className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
-              />
-            </div>
-          </div>
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Total Harga
-            </label>
-            <input
-              type="number"
-              value={totalHarga}
-              readOnly
-              className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full text-white bg-teal-300 hover:bg-teal-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-6"
-          >
-            Kirim Order
-          </button>
-        </form>
+        
+        {cartItems.length === 0 ? (
+          <p className="text-center text-gray-700">Tidak ada request pesanan</p>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            {cartItems.map((item, index) => (
+              <div key={item.menu.id} className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Nama Menu</label>
+                  <input
+                    type="text"
+                    name="menuName"
+                    value={item.menu.name}
+                    readOnly
+                    className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Harga (per item)</label>
+                  <input
+                    type="number"
+                    name="price"
+                    value={item.price}
+                    onChange={(e) => handleChange(e, index)}
+                    className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Quantity</label>
+                  <input
+                    type="number"
+                    name="quantity"
+                    value={item.quantity}
+                    onChange={(e) => handleChange(e, index)}
+                    className="bg-gray-100 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5"
+                  />
+                </div>
+              </div>
+            ))}
+            <button
+              type="submit"
+              className="w-full text-white bg-teal-300 hover:bg-teal-400 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-6"
+            >
+              Kirim Order
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
 };
 
 export default OrderModal;
+

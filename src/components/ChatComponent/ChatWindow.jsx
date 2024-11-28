@@ -11,7 +11,7 @@ import api from '../../api/config';
 const ChatWindow = () => {
   const { roomId, messages, setMessages } = useChat();
   const [newMessage, setNewMessage] = useState(''); 
-  const [userInfo, setUserInfo] = useState({ name: 'Asty', avatar: 'https://i.pravatar.cc/150?img=5' }); // Mock user info
+  const [userInfo, setUserInfo] = useState({ name: 'Asty', avatar: 'https://www.thaimediafund.or.th/wp-content/uploads/2024/07/default-avatar-profile-icon-.jpg' }); // Mock user info
   const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedUserId, setSelectedUserId] = useState(null); 
   const [userId, setUserId] = useState([]);

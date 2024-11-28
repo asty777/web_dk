@@ -88,12 +88,12 @@ const UserBar = () => {
             >
               <div className="flex items-center w-full">
                 <div className="flex-shrink-0">
-                  <img src='https://i.pravatar.cc/150?img=5' alt={user.username} className="w-10 h-10 rounded-full" />
+                  <img src='https://www.thaimediafund.or.th/wp-content/uploads/2024/07/default-avatar-profile-icon-.jpg' alt={user.username} className="w-10 h-10 rounded-full" />
                 </div>
                 <div className="ml-3">
                   <h3 className="text-sm font-medium">{user.username}</h3>
                   
-                  <p className="text-xs text-gray-500">{user.lastChat || 'No recent chat'}</p>
+                  {/* <p className="text-xs text-gray-500">{user.lastChat || 'No recent chat'}</p> */}
                 </div>
               </div>
               <div className="w-full border-b border-gray-300 mt-2"></div>

@@ -19,7 +19,7 @@ const router = createBrowserRouter([
       element: PrivatePage.OrderPage,
     },
     {
-      path: "/DetailOrder",
+      path: '/DetailOrder/:id',
       element: PrivatePage.DetailOrderPage,
     },
     {

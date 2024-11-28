@@ -32,7 +32,7 @@ const TotalPesanan = () => {
                         <img src={LogoTotalOrder} alt="Total Pesanan" className="w-14 h-14" />
                     </div>
                     <div className="ml-4">
-                        <h5 className="text-3xl font-semibold text-gray-800">20</h5>
+                        <h5 className="text-3xl font-semibold text-gray-800">01</h5>
                         <p className="text-sm text-gray-500">Total Pesanan Dibatalkan</p>
                     </div>
                 </div>

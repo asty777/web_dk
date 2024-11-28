@@ -3,13 +3,14 @@ import MenuPhoto from "../../assets/MenuCard.png";
 import CategoriesSection from "../filter/CategoriesSection";
 import api from "../../api/config";
 import NoMenu from "../../assets/NoMenu.png";
+import { BASE_API_URL } from "../../api/config";
 
 const MenuCard = () => {
   const [menuItems, setMenuItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filteredItems, setFilteredItems] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 12;
 
   useEffect(() => {
     const fetchMenuItems = async () => {
@@ -23,6 +24,8 @@ const MenuCard = () => {
         });
         setMenuItems(menuResponse.data.data);
         setFilteredItems(menuResponse.data.data);
+        console.log(menuResponse.data.data);
+        
 
         const categoryResponse = await api.get("/get_categories", {
           headers: {
@@ -31,6 +34,7 @@ const MenuCard = () => {
           },
         });
         setCategories(categoryResponse.data.data);
+        
       } catch (error) {
         console.error("Failed to fetch menu items or categories", error);
       }
@@ -79,11 +83,22 @@ const MenuCard = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {currentItems.map((item) => (
                     <div key={item.id} className="bg-[#D8E6E9] rounded-lg mb-7 shadow-md overflow-hidden">
-                        <img src={MenuPhoto} alt={item.name} className="w-full h-40 object-cover" />
+                     <img 
+                        src={`${BASE_API_URL}${item.image}`} 
+                        alt={item.name} 
+                        className="w-full h-40 object-cover" 
+                        onError={(e) => e.target.src = MenuPhoto} 
+                      />
                         <div className="p-4 flex-grow">
                             <h3 className="text-lg font-semibold">{item.name}</h3>
                             <p className="text-gray-500">{item.description}</p>
-                            <p className="text-gray-500">Category: {getCategoryName(item.categoryId)}</p>
+                            <button
+                              className="text-white bg-teal-500 hover:bg-teal-600 border  rounded-full px-3 py-1 mt-3 text-sm focus:outline-none"
+                            >
+                             {getCategoryName(item.categoryId)}
+                            </button>
+
+
                         </div>
                     </div>
                 ))}
@@ -124,4 +139,7 @@ const MenuCard = () => {
 };
 
 export default MenuCard;
+
+
+
 
